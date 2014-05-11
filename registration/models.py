@@ -16,11 +16,18 @@ class Student(models.Model):
 		name = self.username.first_name + " " + self.username.last_name
 		return name
 
+class Semester(models.Model):
+	season = models.CharField(max_length=256)
+	year = models.CharField(max_length=4)
+	start = models.CharField(max_length=10) #YYYY-MM-DD as per RFC 3339, always a Monday. Reason: figuring out which dates are mon/tues/etc for Google Calendar
+	end = models.CharField(max_length=10) #YYYY-MM-DD as per RFC 3339, could be any day.
+
 class Course(models.Model):
 	code = models.CharField(max_length=10) #Ex: "CS-GY 1234""
 	name = models.CharField(max_length=256)
 	major = models.ForeignKey(Major)
-	semester = models.CharField(max_length=256)
+	#semester = models.CharField(max_length=256)
+	semester = models.ForeignKey(Semester)
 	description = models.CharField(max_length=1024)
 	professor = models.CharField(max_length=256)
 	isOpen = models.BooleanField(default=False)

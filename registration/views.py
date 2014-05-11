@@ -33,6 +33,12 @@ FLOW = flow_from_clientsecrets(
 # Create your views here.
 @login_required
 def index(request):
+	storage = Storage(CredentialsModel, 'id', request.user, 'credential')
+	credential = storage.get()
+	if credential is None or credential.invalid == True:
+		FLOW.params['state'] = xsrfutil.generate_token(settings.SECRET_KEY, request.user)
+		authorize_url = FLOW.step1_get_authorize_url()
+		return HttpResponseRedirect(authorize_url)
 	return render(request, 'registration/index.html')
 
 @login_required
@@ -62,6 +68,14 @@ def enroll(request):
 	cart_list = Cart.objects.filter(student=currentStudent)
 	enrollResults = {}
 
+	'''Initialize some credentials for Google App Engine, for adding new classes to calendar'''
+	storage = Storage(CredentialsModel, 'id', request.user, 'credential')
+	credential = storage.get()
+	http = httplib2.Http()
+	http = credential.authorize(http)
+	service = build("calendar", "v3", http=http)
+	calendar_id = Calendar.objects.get(student=currentStudent).calendarID
+
 	for item in cart_list:
 		currentCourse = Course.objects.get(id=item.course.id)
 		created = False
@@ -69,6 +83,69 @@ def enroll(request):
 			obj, created = Transcript.objects.get_or_create(student=currentStudent, course=currentCourse)
 		if created:
 			enrollResults[currentCourse.code] = "Enrollment Successful"
+			event = {}
+			'''Example of what an event looks like:
+			event = {
+				'summary': 'Appointment',
+				'location': 'Somewhere',
+				'start': {
+					'dateTime': '2011-06-03T10:00:00.000-05:00'
+				},
+				'end': {
+					'dateTime': '2011-06-03T10:25:00.000-05:00'
+				},
+			}'''
+			event["summary"] = currentCourse.code
+			#event["location"] = currentCourse.room #whoops.. never added a room field for courses.
+			event["recurrence"] = []
+			event["recurrence"].append("RRULE:FREQ=WEEKLY;UNTIL=" + currentCourse.semester.end[0:4] + currentCourse.semester.end[5:7] + currentCourse.semester.end[8:10] + "T000000Z")
+
+			event["start"] = {}
+			event["end"] = {}
+			if currentCourse.monday != "0000-0000":
+				event["start"]["dateTime"] = (currentCourse.semester.start + "T" + 
+					currentCourse.monday[0:2] + ":" + currentCourse.monday[2:4] + ":00.000")
+				event["start"]["timeZone"] = "America/New_York"
+				event["end"]["dateTime"] = (currentCourse.semester.start + "T" + 
+					currentCourse.monday[5:7] + ":" + currentCourse.monday[7:9] + ":00.000")
+				event["end"]["timeZone"] = "America/New_York"
+				service.events().insert(calendarId=calendar_id, body=event).execute()
+			if currentCourse.tuesday != "0000-0000":
+				startDate = currentCourse.semester.start[0:8] + str(int(currentCourse.semester.start[8:]) + 1)
+				event["start"]["dateTime"] = (startDate + "T" + 
+					currentCourse.tuesday[0:2] + ":" + currentCourse.tuesday[2:4] + ":00.000")
+				event["start"]["timeZone"] = "America/New_York"
+				event["end"]["dateTime"] = (startDate + "T" + 
+					currentCourse.tuesday[5:7] + ":" + currentCourse.tuesday[7:9] + ":00.000")
+				event["end"]["timeZone"] = "America/New_York"
+				service.events().insert(calendarId=calendar_id, body=event).execute()
+			if currentCourse.wednesday != "0000-0000":
+				startDate = currentCourse.semester.start[0:8] + str(int(currentCourse.semester.start[8:]) + 2)
+				event["start"]["dateTime"] = (startDate + "T" + 
+					currentCourse.wednesday[0:2] + ":" + currentCourse.wednesday[2:4] + ":00.000")
+				event["start"]["timeZone"] = "America/New_York"
+				event["end"]["dateTime"] = (startDate + "T" + 
+					currentCourse.wednesday[5:7] + ":" + currentCourse.wednesday[7:9] + ":00.000")
+				event["end"]["timeZone"] = "America/New_York"
+				service.events().insert(calendarId=calendar_id, body=event).execute()
+			if currentCourse.thursday != "0000-0000":
+				startDate = currentCourse.semester.start[0:8] + str(int(currentCourse.semester.start[8:]) + 3)
+				event["start"]["dateTime"] = (startDate + "T" + 
+					currentCourse.thursday[0:2] + ":" + currentCourse.thursday[2:4] + ":00.000")
+				event["start"]["timeZone"] = "America/New_York"
+				event["end"]["dateTime"] = (startDate + "T" + 
+					currentCourse.thursday[5:7] + ":" + currentCourse.thursday[7:9] + ":00.000")
+				event["end"]["timeZone"] = "America/New_York"
+				service.events().insert(calendarId=calendar_id, body=event).execute()
+			if currentCourse.friday != "0000-0000":
+				startDate = currentCourse.semester.start[0:8] + str(int(currentCourse.semester.start[8:]) + 4)
+				event["start"]["dateTime"] = (startDate + "T" + 
+					currentCourse.friday[0:2] + ":" + currentCourse.friday[2:4] + ":00.000")
+				event["start"]["timeZone"] = "America/New_York"
+				event["end"]["dateTime"] = (startDate + "T" + 
+					currentCourse.friday[5:7] + ":" + currentCourse.friday[7:9] + ":00.000")
+				event["end"]["timeZone"] = "America/New_York"
+				service.events().insert(calendarId=calendar_id, body=event).execute()
 		else:
 			enrollResults[currentCourse.code] = "Enrollment Unsuccessful"
 	return render(request, "registration/enroll.html", {'results': enrollResults})
@@ -109,6 +186,8 @@ def sched(request):
 			new_calendar = service.calendars().insert(body={'summary': 'CCProject', 'timeZone': 'America/New_York'}).execute()
 			calendar_id = new_calendar['id']
 			Calendar.objects.create(student=currentStudent, calendarID=calendar_id)
+
+		enrolled = Course.objects.get()
 		return render(request, "registration/sched.html", {'calendar_id': calendar_id})
 
 @login_required
@@ -118,7 +197,7 @@ def auth_return(request):
 	credential = FLOW.step2_exchange(request.REQUEST)
 	storage = Storage(CredentialsModel, 'id', request.user, 'credential')
 	storage.put(credential)
-	return HttpResponseRedirect("/reg/sched")
+	return HttpResponseRedirect("/reg")
 
 def logout_view(request):
 	logout(request)
