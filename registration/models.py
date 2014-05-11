@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from oauth2client.django_orm import FlowField, CredentialsField
+
 class Major(models.Model):
 	major = models.CharField(max_length=256)
 	def __unicode__(self):
@@ -53,3 +55,17 @@ class Cart(models.Model):
 	course = models.ForeignKey(Course)
 	def __unicode__(self):
 		return self.course.name
+
+
+'''Stuff for Google App Engine'''
+class CredentialsModel(models.Model):
+	id = models.ForeignKey(User, primary_key=True)
+	credential = CredentialsField()
+
+class FlowModel(models.Model):
+	id = models.ForeignKey(User, primary_key=True)
+	flow = FlowField()
+
+class Calendar(models.Model):
+	student = models.ForeignKey(Student)
+	calendarID = models.CharField(max_length=256)

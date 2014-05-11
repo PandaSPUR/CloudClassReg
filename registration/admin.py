@@ -7,5 +7,8 @@ admin.site.register(Transcript)
 admin.site.register(CoursePrereq)
 admin.site.register(Cart)
 admin.site.register(Major)
+admin.site.register(CredentialsModel)
+admin.site.register(FlowModel)
+admin.site.register(Calendar)
 
 # Register your models here.
