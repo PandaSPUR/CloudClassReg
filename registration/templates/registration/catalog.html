@@ -1,0 +1,37 @@
+{% if firstload %}
+    <p>Please pick a major to browse.</p>
+{% endif %}
+
+{% if majors_list %}
+<form action="{% url 'reg:catalog' %}" method="post">
+{% csrf_token %}
+    <select name="chosenMajor">
+    {% for major in majors_list %}
+    	<option value = "{{major.id}}">{{ major.major }}</option>
+    {% endfor %}
+    </select>
+    <input type="submit" value="Search" />
+</form>
+{% else %}
+<p>No majors are available</p>
+{% endif %}
+
+{% if courses_list %}
+	<form action="{% url 'reg:cart' %}" method="post" id="chosenCourse" name="chosenCourse">
+	{% csrf_token %}
+    {% for course in courses_list %}
+    	{{course.name}} 
+    	{% if course.isOpen %}
+    		<button type="submit" formaction="{% url 'reg:cart' %}" formmethod="post" value="{{ course.id }}"> Add Class </button>
+    		<button type="button" form="chosenCourse" value="{{ course.id }}"> Add Class </button>
+    		<input type="submit" formaction="{% url 'reg:cart' %}" formmethod="post" value="{{ course.id }}"> Add Class </button>
+    		<a href="/reg/cart/?chosenCourse={{ course.id }}">Add Class </a>
+    	{% endif %}
+    	<br />
+    {% endfor %}
+	</form>
+{% else %}
+	{% if not firstload %}
+    <p>No courses are available</p>
+    {% endif %}
+{% endif %}
