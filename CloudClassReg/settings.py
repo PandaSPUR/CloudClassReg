@@ -100,7 +100,7 @@ STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 #STATIC_URL = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'registration/static/')
 #STATIC_URL = '/static/'
 
-AWS_STORAGE_BUCKET_NAME = os.environ['ccproject2014']
+AWS_STORAGE_BUCKET_NAME = 'ccproject2014'
 STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
 STATIC_URL = S3_URL
