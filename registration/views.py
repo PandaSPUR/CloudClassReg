@@ -22,12 +22,20 @@ from oauth2client.django_orm import Storage
 # application, including client_id and client_secret, which are found
 # on the API Access tab on the Google APIs
 # Console <http://code.google.com/apis/console>
-CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), '..', 'client_secrets.json')
+'''for local testing
+CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), '..', 'client_secrets-local.json')
 
 FLOW = flow_from_clientsecrets(
     CLIENT_SECRETS,
     scope='https://www.googleapis.com/auth/calendar',
     redirect_uri='http://localhost:8000/reg/oauth2callback')
+'''
+CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), '..', 'client_secrets-aws.json')
+
+FLOW = flow_from_clientsecrets(
+    CLIENT_SECRETS,
+    scope='https://www.googleapis.com/auth/calendar',
+    redirect_uri='http://cloudclassreg.elasticbeanstalk.com/reg/oauth2callback')
 '''end for Google App Engine'''
 
 # Create your views here.
