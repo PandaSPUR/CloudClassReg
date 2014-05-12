@@ -35,7 +35,7 @@ CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), '..', 'client_secrets-a
 FLOW = flow_from_clientsecrets(
     CLIENT_SECRETS,
     scope='https://www.googleapis.com/auth/calendar',
-    redirect_uri='http://cloudclassreg.elasticbeanstalk.com/reg/oauth2callback')
+    redirect_uri='http://CloudClassReg-env-4xhwra3wte.elasticbeanstalk.com/reg/oauth2callback')
 '''end for Google App Engine'''
 
 # Create your views here.
