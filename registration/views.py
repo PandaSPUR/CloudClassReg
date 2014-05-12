@@ -44,11 +44,12 @@ def index(request):
 @login_required
 def catalog(request):
 	majors_list = Major.objects.all()
+	semesters_list = Semester.objects.all()
 	if request.method == 'POST':
-		courses_list = Course.objects.filter(major=request.POST['chosenMajor'])
-		return render(request, "registration/catalog.html", {'majors_list': majors_list, 'courses_list': courses_list})
+		courses_list = Course.objects.filter(major=request.POST['chosenMajor']).filter(semester=request.POST['chosenSemester'])
+		return render(request, "registration/catalog.html", {'majors_list': majors_list, 'semesters_list': semesters_list, 'courses_list': courses_list})
 	else:
-		return render(request, "registration/catalog.html", {'majors_list': majors_list, 'firstload': True})
+		return render(request, "registration/catalog.html", {'majors_list': majors_list, 'semesters_list': semesters_list, 'firstload': True})
 
 @login_required
 def cart(request):
@@ -119,7 +120,7 @@ def enroll(request):
 			'''BUILDING EVENT ENTRY FOR GOOGLE CALENDAR'''
 			event = {}
 			event["summary"] = currentCourse.code
-			#event["location"] = currentCourse.room #whoops.. never added a room field for courses.
+			event["location"] = currentCourse.room
 			event["recurrence"] = []
 			event["recurrence"].append("RRULE:FREQ=WEEKLY;UNTIL=" + currentCourse.semester.end[0:4] + currentCourse.semester.end[5:7] + currentCourse.semester.end[8:10] + "T000000Z")
 

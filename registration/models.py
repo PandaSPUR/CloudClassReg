@@ -56,45 +56,46 @@ class Course(models.Model):
 		studentPastCourses = Transcript.objects.filter(student__id=s_id)
 		prereqsMet = True #default to true if there are no prereqs.
 		for course in prereqs:
+			prereqsMet = False
 			for pastCourse in studentPastCourses:
 				if pastCourse.course.code == course.prereq.code:
-					if pastCourse.grade != 0: #can also change this to "if >=2" if a C minimum is required from prereqs
-						break; #Found a matching completed prerequisite, skip on to the next required "course"
-				prereqsMet = False #no "pastCourse" matching required "course"
+					if pastCourse.grade > 0: #can also change this to "if >=2" if a C minimum is required from prereqs
+						prereqsMet = True
+						continue #Found a matching completed prerequisite, skip on to the next required "course"
 		return prereqsMet
 	#check if a student of s_id is enrolled in a conflicting course.
 	def hasConflict(self, s_id):
 		otherCourses = Transcript.objects.filter(student__id=s_id).filter(course__semester=self.semester)
 		for course in otherCourses:
-			if self.monday != "0000-0000":
+			if self.monday != "0000-0000" and course.course.monday != "0000-0000":
 				#if starting time is between start and end of other course:
 				if int(course.course.monday[0:4]) <= int(self.monday[0:4]) < int(course.course.monday[5:]):
 					return True;
 				#if this class ends after other starts.
 				if int(course.course.monday[0:4]) < int(self.monday[5:]):
 					return True;
-			if self.tuesday != "0000-0000":
+			if self.tuesday != "0000-0000" and course.course.tuesday != "0000-0000":
 				#if starting time is between start and end of other course:
 				if int(course.course.tuesday[0:4]) <= int(self.tuesday[0:4]) < int(course.course.tuesday[5:]):
 					return True;
 				#if this class ends after other starts.
 				if int(course.course.tuesday[0:4]) < int(self.tuesday[5:]):
 					return True;
-			if self.wednesday != "0000-0000":
+			if self.wednesday != "0000-0000" and course.course.wednesday != "0000-0000":
 				#if starting time is between start and end of other course:
 				if int(course.course.wednesday[0:4]) <= int(self.wednesday[0:4]) < int(course.course.wednesday[5:]):
 					return True;
 				#if this class ends after other starts.
 				if int(course.course.wednesday[0:4]) < int(self.wednesday[5:]):
 					return True;
-			if self.thursday != "0000-0000":
+			if self.thursday != "0000-0000" and course.course.thursday != "0000-0000":
 				#if starting time is between start and end of other course:
 				if int(course.course.thursday[0:4]) <= int(self.thursday[0:4]) < int(course.course.thursday[5:]):
 					return True;
 				#if this class ends after other starts.
 				if int(course.course.thursday[0:4]) < int(self.thursday[5:]):
 					return True;
-			if self.friday != "0000-0000":
+			if self.friday != "0000-0000" and course.course.friday != "0000-0000":
 				#if starting time is between start and end of other course:
 				if int(course.course.friday[0:4]) <= int(self.friday[0:4]) < int(course.course.friday[5:]):
 					return True;

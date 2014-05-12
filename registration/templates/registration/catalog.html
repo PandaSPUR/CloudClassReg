@@ -5,23 +5,25 @@
 <h1>Browse Available Classes: </h1>
 
 <aside>
-{% if majors_list %}
-<form action="{% url 'reg:catalog' %}" method="post">
-{% csrf_token %}
-    <select name="chosenMajor">
-    {% for major in majors_list %}
-    	<option value = "{{major.id}}">{{ major.major }}</option>
-    {% endfor %}
-    </select>
-    <input type="submit" value="Search" />
-</form>
-{% else %}
-No majors are available
-{% endif %}
+    Filter: <br />
+    <form action="{% url 'reg:catalog' %}" method="post">
+        {% csrf_token %}
+        <select name="chosenSemester">
+            {% for semester in semesters_list %}
+                <option value = "{{semester.id}}">{{ semester.season }} {{ semester.year }}</option>
+            {% endfor %}
+        </select> <br /> 
+        <select name="chosenMajor">
+            {% for major in majors_list %}
+            	<option value = "{{major.id}}">{{ major.major }}</option>
+            {% endfor %}
+        </select> <br /> <br />
+        <input type="submit" value="Go" />
+    </form>
 </aside>
 
 {% if firstload %}
-    <p>Please pick a major to browse. </p>
+    <p>Please pick a major and semester to browse. </p>
 {% endif %}
 
 
