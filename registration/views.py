@@ -30,7 +30,7 @@ FLOW = flow_from_clientsecrets(
     scope='https://www.googleapis.com/auth/calendar',
     redirect_uri='http://localhost:8000/reg/oauth2callback')
 '''
-CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), '..', 'client_secrets-aws.json')
+CLIENT_SECRETS = os.path.join(STATIC_ROOT, 'client_secrets-aws.json')
 
 FLOW = flow_from_clientsecrets(
     CLIENT_SECRETS,
