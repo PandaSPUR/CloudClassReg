@@ -67,7 +67,7 @@ DATABASES = {
     }
 }
 #'''
-
+#'''For AWS use:
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -78,7 +78,7 @@ DATABASES = {
         'PORT': os.environ['RDS_PORT'],
     }
 }
-
+#'''
 # Internationalization
 # https://docs.djangoproject.com/en/1.6/topics/i18n/
 
@@ -96,4 +96,5 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 #STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static')
-STATIC_URL = '/static/'
+STATIC_URL = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static/')
+#STATIC_URL = '/static/'
