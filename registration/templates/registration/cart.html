@@ -12,7 +12,7 @@
 		<p>
 			<b> Classes in your cart: </b> <br />
 			{% for item in cart_list %}
-				{{item.course.code}}: {{item}} <a href="/reg/removeitem/?code={{item.course.code}}">(Remove)</a><br />
+				{{item.course.code}}: {{item.course.name}} <a href="/reg/removeitem/?code={{item.course.code}}">(Remove)</a><br />
 			{% endfor %}
 		</p>
 		

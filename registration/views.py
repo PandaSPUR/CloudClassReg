@@ -62,6 +62,7 @@ def cart(request):
 	cart_list = Cart.objects.filter(student=currentStudent)
 	return render(request, "registration/cart.html", {'cart_list': cart_list})
 
+@login_required
 def empty_cart(request):
 	currentStudent = Student.objects.get(username__username=request.user.username)
 	cart_list = Cart.objects.filter(student=currentStudent)
@@ -69,6 +70,7 @@ def empty_cart(request):
 		item.delete()
 	return HttpResponseRedirect("/reg/cart/")
 
+@login_required
 def remove_cart_item(request):
 	if request.GET:
 		currentStudent = Student.objects.get(username__username=request.user.username)
@@ -93,22 +95,29 @@ def enroll(request):
 	for item in cart_list:
 		currentCourse = Course.objects.get(id=item.course.id)
 		created = False
-		if currentCourse.hasSpace:
-			obj, created = Transcript.objects.get_or_create(student=currentStudent, course=currentCourse)
+
+		#check a few conditions before completing enrollment.
+		if not currentCourse.hasSpace:
+			enrollResults[currentCourse.code] = "Class is closed."
+			continue
+		if not currentCourse.meetsPrereqs(currentStudent.id):
+			enrollResults[currentCourse.code] = "Prerequisite courses not completed."
+			continue
+		if Transcript.objects.filter(student__id=currentStudent.id).filter(course__id=currentCourse.id).count() != 0:
+			enrollResults[currentCourse.code] = "Already enrolled."
+			continue
+		if currentCourse.hasConflict(currentStudent.id):
+			enrollResults[currentCourse.code] = "Conflicts with another enrolled class."
+			continue
+
+		#try to add the course to student's transcript.
+		obj, created = Transcript.objects.get_or_create(student=currentStudent, course=currentCourse)
 		if created:
 			enrollResults[currentCourse.code] = "Enrollment Successful"
+			item.delete() #Successfully enrolled, so remove from cart.
+
+			'''BUILDING EVENT ENTRY FOR GOOGLE CALENDAR'''
 			event = {}
-			'''Example of what an event looks like:
-			event = {
-				'summary': 'Appointment',
-				'location': 'Somewhere',
-				'start': {
-					'dateTime': '2011-06-03T10:00:00.000-05:00'
-				},
-				'end': {
-					'dateTime': '2011-06-03T10:25:00.000-05:00'
-				},
-			}'''
 			event["summary"] = currentCourse.code
 			#event["location"] = currentCourse.room #whoops.. never added a room field for courses.
 			event["recurrence"] = []
@@ -162,6 +171,7 @@ def enroll(request):
 				service.events().insert(calendarId=calendar_id, body=event).execute()
 		else:
 			enrollResults[currentCourse.code] = "Enrollment Unsuccessful"
+
 	return render(request, "registration/enroll.html", {'results': enrollResults})
 
 @login_required
