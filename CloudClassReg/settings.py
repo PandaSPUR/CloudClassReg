@@ -55,7 +55,7 @@ WSGI_APPLICATION = 'CloudClassReg.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.6/ref/settings/#databases
-
+'''For local testing:
 DATABASES = {
     'default': {
         'ENGINE':'django.db.backends.mysql',
@@ -64,6 +64,18 @@ DATABASES = {
         'PASSWORD': 'panda',
         'HOST': '127.0.0.1',
         'PORT': '',
+    }
+}
+#'''
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.environ['RDS_DB_NAME'],
+        'USER': os.environ['RDS_USERNAME'],
+        'PASSWORD': os.environ['RDS_PASSWORD'],
+        'HOST': os.environ['RDS_HOSTNAME'],
+        'PORT': os.environ['RDS_PORT'],
     }
 }
 
