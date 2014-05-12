@@ -37,7 +37,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'registration',
-    'storanges',
+    'storages',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -96,11 +96,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
-#STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static')
+STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static')
 #STATIC_URL = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'registration/static/')
-STATIC_URL = '/static/'
-'''
+#STATIC_URL = '/static/'
+
 AWS_STORAGE_BUCKET_NAME = os.environ['elasticbeanstalk-us-east-1-453830675865']
 STATICFILES_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 S3_URL = 'http://%s.s3.amazonaws.com/' % AWS_STORAGE_BUCKET_NAME
-STATIC_URL = S3_URL'''
+STATIC_URL = S3_URL
