@@ -6,6 +6,8 @@ urlpatterns = patterns('',
     # ex: /polls/
     url(r'^$', views.index, name='index'),
     url(r'^cart/', views.cart, name='cart'),
+    url(r'^emptycart/', views.empty_cart, name='empty_cart'),
+    url(r'^removeitem/', views.remove_cart_item, name='remove_cart_item'),
     url(r'^catalog/', views.catalog, name='catalog'),
     url(r'^enroll/', views.enroll, name='enroll'),
     url(r'^sched/', views.sched, name='sched'),

@@ -75,22 +75,23 @@ body {
    =================== */
 
 .header-container {
-    border-bottom: 20px solid #e44d26;
+    border-bottom: 20px solid #400466;
 }
 
 .footer-container,
 .main aside {
-    border-top: 20px solid #e44d26;
+    border-top: 20px solid #400466;
 }
 
 .header-container,
 .footer-container,
 .main aside {
-    background: #f16529;
+    background: #57068c;
 }
 
 .title {
     color: white;
+    text-decoration: none;
 }
 
 /* ==============
@@ -112,7 +113,7 @@ nav a {
     font-weight: bold;
 
     color: white;
-    background: #e44d26;
+    background: #400466;
 }
 
 nav a:hover,
@@ -158,9 +159,15 @@ nav a:hover {
    Author's custom styles
    ========================================================================== */
 
+.aside-link,
+.footer-link {
+    color: white;
+}
 
-
-
+a.disabled:link, 
+a.disabled:visited { 
+    color: grey; 
+}
 
 
 

@@ -1,7 +1,25 @@
-{% if cart_list %}
-	{% for item in cart_list %}
-		{{item}}
-	{% endfor %}
-{% endif %}
+{% extends "base.html" %}
 
-<a href="/reg/enroll">Enroll</a>
+{% block content %}
+
+<h1> Your Cart </h1>
+
+	{% if cart_list %}
+		<aside>
+			<a class="aside-link" href="/reg/emptycart">Empty Cart</a> <br />
+			<a class="aside-link" href="/reg/enroll">Enroll</a> <br />
+		</aside>
+		<p>
+			<b> Classes in your cart: </b> <br />
+			{% for item in cart_list %}
+				{{item.course.code}}: {{item}} <a href="/reg/removeitem/?code={{item.course.code}}">(Remove)</a><br />
+			{% endfor %}
+		</p>
+		
+	{% else %}
+		<h6>None - Cart is empty</h6>
+	{% endif %}
+
+
+
+{% endblock %}

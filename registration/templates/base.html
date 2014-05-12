@@ -17,12 +17,12 @@
 
         <div class="header-container">
             <header class="wrapper clearfix">
-                <h1 class="title">h1.title</h1>
+                <h1 class="title" ><a href="/reg/" class="title">Class Registration</a></h1>
                 <nav>
                     <ul>
-                        <li><a href="#">nav ul li a</a></li>
-                        <li><a href="#">nav ul li a</a></li>
-                        <li><a href="#">nav ul li a</a></li>
+                        <li><a href="/reg/sched/">Schedule</a></li>
+                        <li><a href="/reg/catalog/">Search</a></li>
+                        <li><a href="/reg/cart/">Cart</a></li>
                     </ul>
                 </nav>
             </header>
@@ -36,7 +36,10 @@
 
         <div class="footer-container">
             <footer class="wrapper">
-                <h3>footer</h3>
+                <h5>
+                	Logged in as {{user.first_name}} {{user.last_name}} <br />
+                	<a href="/reg/logout/" class="footer-link">Logout</a>
+            	</h5>
             </footer>
         </div>
 

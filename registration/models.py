@@ -35,14 +35,16 @@ class Course(models.Model):
 	credits = models.IntegerField(default=3)
 	#Really crude way of picking a class's time slots...
 	#If the class doesnt meet at that day, just write "0000-0000" for sake of uniformity
-	monday = models.CharField(max_length=9) #Format: HHMM-HHMM
-	tuesday = models.CharField(max_length=9) #Format: HHMM-HHMM
-	wednesday = models.CharField(max_length=9) #Format: HHMM-HHMM
-	thursday = models.CharField(max_length=9) #Format: HHMM-HHMM
-	friday = models.CharField(max_length=9) #Format: HHMM-HHMM
+	monday = models.CharField(max_length=9, default="0000-0000") #Format: HHMM-HHMM
+	tuesday = models.CharField(max_length=9, default="0000-0000") #Format: HHMM-HHMM
+	wednesday = models.CharField(max_length=9, default="0000-0000") #Format: HHMM-HHMM
+	thursday = models.CharField(max_length=9, default="0000-0000") #Format: HHMM-HHMM
+	friday = models.CharField(max_length=9, default="0000-0000") #Format: HHMM-HHMM
 	def __unicode__(self):
 		return self.code
 	def hasSpace(self):
+		if not self.isOpen: #add this here so checking hasSpace is sufficient for enrollment and catalog display purposes
+			return False
 		if self.transcript_set.count() < self.capacity:
 			return True
 		else:

@@ -1,7 +1,10 @@
-{% if firstload %}
-    <p>Please pick a major to browse.</p>
-{% endif %}
+{% extends "base.html" %}
 
+{% block content %}
+
+<h1>Browse Available Classes: </h1>
+
+<aside>
 {% if majors_list %}
 <form action="{% url 'reg:catalog' %}" method="post">
 {% csrf_token %}
@@ -13,22 +16,52 @@
     <input type="submit" value="Search" />
 </form>
 {% else %}
-<p>No majors are available</p>
+No majors are available
+{% endif %}
+</aside>
+
+{% if firstload %}
+    <p>Please pick a major to browse. </p>
 {% endif %}
 
+
 {% if courses_list %}
-	<form action="{% url 'reg:cart' %}" method="post" id="chosenCourse" name="chosenCourse">
-	{% csrf_token %}
+    <article>
     {% for course in courses_list %}
-    	{{course.name}} 
-    	{% if course.isOpen %}
-    		<a href="/reg/cart/?chosenCourse={{ course.id }}">Add Class </a>
+        <section> <p>
+    	{{course.code}}: {{course.name}} <br />
+        Professor: {{course.professor}} <br />
+        Description: {{course.description}} <br />
+        Sessions: 
+            {% if course.monday != "0000-0000" %}
+                Monday: {{course.monday}}, 
+            {% endif %}
+            {% if course.tuesday != "0000-0000" %}
+                Tuesday: {{course.tuesday}}, 
+            {% endif %}
+            {% if course.wednesday != "0000-0000" %}
+                Wednesday: {{course.wednesday}}, 
+            {% endif %}
+            {% if course.thursday != "0000-0000" %}
+                Thursday: {{course.thursday}}, 
+            {% endif %}
+            {% if course.friday != "0000-0000" %}
+                Friday: {{course.friday}}, 
+            {% endif %}
+        <br />
+        Enrollment: {{course.transcript_set.count}}/{{course.capacity}} <br />
+    	{% if course.hasSpace %}
+    		<a href="/reg/cart/?chosenCourse={{ course.id }}">Add Class </a><br />
+        {% else %}
+            <a href="#" class="disabled">Add Class (Class Closed!)</a><br />
     	{% endif %}
-    	<br />
+        </p></section>
     {% endfor %}
-	</form>
+    </article>
 {% else %}
 	{% if not firstload %}
     <p>No courses are available</p>
     {% endif %}
 {% endif %}
+
+{% endblock %}

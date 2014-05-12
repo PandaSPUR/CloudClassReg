@@ -62,6 +62,20 @@ def cart(request):
 	cart_list = Cart.objects.filter(student=currentStudent)
 	return render(request, "registration/cart.html", {'cart_list': cart_list})
 
+def empty_cart(request):
+	currentStudent = Student.objects.get(username__username=request.user.username)
+	cart_list = Cart.objects.filter(student=currentStudent)
+	for item in cart_list:
+		item.delete()
+	return HttpResponseRedirect("/reg/cart/")
+
+def remove_cart_item(request):
+	if request.GET:
+		currentStudent = Student.objects.get(username__username=request.user.username)
+		item = Cart.objects.filter(student=currentStudent).get(course__code=request.GET['code'])
+		item.delete()
+	return HttpResponseRedirect("/reg/cart/")
+
 @login_required
 def enroll(request):
 	currentStudent = Student.objects.get(username__username=request.user.username)
@@ -151,21 +165,6 @@ def enroll(request):
 	return render(request, "registration/enroll.html", {'results': enrollResults})
 
 @login_required
-def schedexample(request):
-	storage = Storage(CredentialsModel, 'id', request.user, 'credential')
-	credential = storage.get()
-	if credential is None or credential.invalid == True:
-		FLOW.params['state'] = xsrfutil.generate_token(settings.SECRET_KEY, request.user)
-		authorize_url = FLOW.step1_get_authorize_url()
-		return HttpResponseRedirect(authorize_url)
-	else:
-		http = httplib2.Http()
-		http = credential.authorize(http)
-		service = build("calendar", "v3", http=http)
-		calendar_list = service.calendarList().list().execute()
-
-		return render(request, "registration/sched.html", {'calendar_list': calendar_list})
-
 def sched(request):
 	storage = Storage(CredentialsModel, 'id', request.user, 'credential')
 	credential = storage.get()
@@ -187,7 +186,6 @@ def sched(request):
 			calendar_id = new_calendar['id']
 			Calendar.objects.create(student=currentStudent, calendarID=calendar_id)
 
-		enrolled = Course.objects.get()
 		return render(request, "registration/sched.html", {'calendar_id': calendar_id})
 
 @login_required
@@ -199,6 +197,7 @@ def auth_return(request):
 	storage.put(credential)
 	return HttpResponseRedirect("/reg")
 
+@login_required
 def logout_view(request):
 	logout(request)
 	return HttpResponseRedirect('/reg/')
