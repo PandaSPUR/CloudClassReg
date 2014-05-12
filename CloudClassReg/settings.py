@@ -67,7 +67,7 @@ DATABASES = {
     }
 }
 #'''
-'''
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -76,16 +76,6 @@ DATABASES = {
         'PASSWORD': os.environ['RDS_PASSWORD'],
         'HOST': os.environ['RDS_HOSTNAME'],
         'PORT': os.environ['RDS_PORT'],
-    }
-}'''
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ebdb',
-        'USER': 'ebroot',
-        'PASSWORD': 'pandapanda',
-        'HOST': 'aar81qonmejk6w.cha4alt6fdfh.us-east-1.rds.amazonaws.com',
-        'PORT': '3306',
     }
 }
 
@@ -106,4 +96,4 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'static')
-STATIC_URL = '/static/'
+#STATIC_URL = '/static/'
